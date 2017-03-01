@@ -1,0 +1,58 @@
+{
+  "applications": [
+    "mspcfo"
+  ],
+  "deploy": {
+    "mspcfo": {
+      "global": {
+        "environment": "staging"
+      },
+      "database": {
+        "adapter": "mysql",
+        "database": "<%= ENV['DB_NAME'] %>",
+        "username": "<%= ENV['DB_USERNAME'] %>",
+        "password": "<%= ENV['DB_PASSWORD'] %>",
+        "host": "<%= ENV['DB_HOST'] %>",
+        "port": "<%= ENV['DB_PORT'] %>",
+        "pool": 40
+      },
+      "framework": {
+        "assets_precompile": false,
+        "envs_in_console": true,
+        "migrate": false
+      },
+      "appserver": {
+        "adapter": "null",
+        "application_yml": true
+      },
+      "worker": {
+        "adapter": "sidekiq",
+        "config": {
+          "logfile": "./log/sidekiq.log",
+          "concurrency": 15,
+          "timeout": 300,
+          "queues": [
+            "critical",
+            "default",
+            "paperclip",
+            "touch",
+            "feed",
+            "destroyer",
+            "extract"
+          ]
+        }
+      }
+    }
+  },
+  "cwlogs": {
+    "logfiles": {
+      "mspcfo-sidekiq": {
+        "log_stream_name": "{instance_id}-{hostname}",
+        "log_group_name": "staging-mspcfo-sidekiq",
+        "file": "/srv/www/mspcfo/shared/log/sidekiq.log",
+        "datetime_format": "%d/%b/%Y:%H:%M:%S %z",
+        "initial_position":"end_of_file"
+      }
+    }
+  }
+}
